@@ -58,7 +58,7 @@ namespace Lexer
 
         protected System.Text.StringBuilder intString;
         public int parseResult = 0;
-
+		public bool IsNegative;
         public IntLexer(string input)
             : base(input)
         {
@@ -70,12 +70,21 @@ namespace Lexer
             NextCh();
             if (currentCh == '+' || currentCh == '-')
             {
-                NextCh();
+				if (currentCh == '-')
+				{
+					IsNegative = true;
+				}
+				else
+				{
+					IsNegative = false;
+				}
+				NextCh();
             }
         
             if (char.IsDigit(currentCh))
             {
-                NextCh();
+				parseResult = int.Parse(currentCh.ToString());
+				NextCh();
             }
             else
             {
@@ -84,7 +93,8 @@ namespace Lexer
 
             while (char.IsDigit(currentCh))
             {
-                NextCh();
+				parseResult = parseResult * 10 + int.Parse(currentCh.ToString());
+				NextCh();
             }
 
 
@@ -93,7 +103,10 @@ namespace Lexer
                 Error();
             }
 
-            return true;
+			if (IsNegative)
+				parseResult = parseResult * (-1);
+
+			return true;
 
         }
     }
@@ -240,7 +253,62 @@ namespace Lexer
 
         public override bool Parse()
         {
-            throw new NotImplementedException();
+			NextCh();
+			if (currentCh == '+' || currentCh == '-')
+			{
+				builder.Append(currentCh);
+				NextCh();
+			}
+
+			if (char.IsDigit(currentCh))
+			{
+				builder.Append(currentCh);
+				NextCh();
+			}
+			else
+			{
+				Error();
+			}
+
+			while (char.IsDigit(currentCh))
+			{
+				builder.Append(currentCh);
+				NextCh();
+			}
+
+			if (currentCh == '.')
+			{
+				builder.Append(currentCh);
+				NextCh();
+			}
+			else if (currentCharValue == -1)
+			{
+				parseResult = double.Parse(builder.ToString());
+				return true;
+			}
+			else
+			{
+				Error();
+			}
+
+			if (currentCharValue == -1)
+			{
+				Error();
+			}
+
+			while (char.IsDigit(currentCh))
+			{
+				builder.Append(currentCh);
+				NextCh();
+			}
+
+			if (currentCharValue != -1)
+			{
+				Error();
+			}
+
+			parseResult = double.Parse(builder.ToString());
+			return true;
         }
        
     }
