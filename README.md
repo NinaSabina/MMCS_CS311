@@ -1,3 +1,6 @@
+git config --global user.name "NinaSabina"
+Эл. почту:
+git config --global user.email "nina.saba.sabina@gmail.com"
 ### Как использовать этот репозиторий
 
 git clone --recurse-submodules <репозиторий> 
