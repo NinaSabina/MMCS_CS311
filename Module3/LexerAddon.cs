@@ -40,16 +40,41 @@ namespace  GeneratedLexer
             // Чтобы вещественные числа распознавались и отображались в формате 3.14 (а не 3,14 как в русской Culture)
             System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US");
 
-            int tok = 0;
-            do {
-                tok = myScanner.yylex();
+			int tok = 0;
+			do
+			{
+				tok = myScanner.yylex();
 
-                if (tok == (int)Tok.EOF)
-                {
-                    break;
-                }
-            } while (true);
-        }
+				if (tok == (int)Tok.EOF)
+				{
+					break;
+				}
+
+				switch (tok)
+				{
+					case (int)Tok.INUM:
+						sumInt += int.Parse(myScanner.yytext);
+						break;
+					case (int)Tok.RNUM:
+						sumDouble += double.Parse(myScanner.yytext);
+						break;
+					case (int)Tok.ID:
+						var len = myScanner.yyleng;
+						if (len > maxIdLength)
+							maxIdLength = len;
+						if (len < minIdLength)
+							minIdLength = len;
+						++idCount;
+						avgIdLength += len;
+						break;
+					case (int)Tok.COMMID:
+						idsInComment.Add(myScanner.yytext);
+						break;
+				}
+			} while (true);
+
+			avgIdLength /= idCount;
+		}
     }
 }
 
